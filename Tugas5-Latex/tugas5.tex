@@ -1,0 +1,318 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{smartdiagram}
+\tikzset{priority arrow/.append style={rotate=180,anchor=0,xshift=30}}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage[spaces,hyphens]{xurl}
+\usepackage[colorlinks=true,citecolor=black,urlcolor=blue,]{hyperref}
+
+%Judul
+\title{Implementasi Algoritma Dijkstra dalam Menemukan Jarak Terdekat dari Lokasi Pengguna ke Tanaman yang Dituju}
+
+%Data Penulis
+\author{\IEEEauthorblockN{Muhammad Daris Nurhakim}
+\IEEEauthorblockA{\textit{School of Electrical Engineering and Informatics}\\
+\textit{Institut Teknologi Bandung}\\
+Bandung, Indonesia\\
+Email: 13220047@std.stei.itb.ac.id}
+}
+
+%Folder Gambar
+\graphicspath{{./gambar/}}
+
+%Index Terms -> Keywords
+\renewcommand\IEEEkeywordsname{Keywords}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Kebun Raya Purwodadi dengan luas area sekitar 85 hektar ternyata kekurangan papan informasi yang menyebabkan pengunjung kerap kali kebingungan dalam mencari lokasi tanaman tertentu. Paper ini bertujuan untuk membuat simulasi dari algoritma yang dapat menentukan jarak terdekat antara pengunjung (pengguna program) dengan lokasi tanaman yang dituju. Algoritma yang digunakan adalah algoritma Dijkstra yang beroperasi secara menyeluruh (\textit{greedy}) untuk menguji setiap persimpangan (\textit{Vertex}) dan jalan (\textit{Edge}) pada Kebun Raya Purwodadi. Berdasarkan hasil simulasi dan pengujian, kompleksitas ruang dari program ini adalah O(V) karena adanya pembentukan \textit{array} yang berisi V \textit{nodes} untuk mencari \textit{heap} minimum. Sementara, kompleksitas waktu dari algoritma tersebut adalah O(V$^2$).
+\end{abstract}
+
+\begin{IEEEkeywords}
+Dijkstra, Vertex, Edge, Tanaman.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Studi mengenai penggunaan algoritma Dijkstra dalam mencari jarak terdekat dapat diimplementasikan pada kasus pencarian tanaman pada Kebun Raya Purwodadi seperti yang telah dilakukan oleh Yusuf et al di tahun 2017~\cite{yusuf2017implementasi}. Paper ini bertujuan untuk melakukan simulasi kembali terhadap penelitian yang telah dilakukan dengan bahasa C serta mengevaluasi efisiensinya melalui perhitungan kompleksitas waktu dan ruang dengan analisis Big-O.
+
+Di Kecamatan Purwodadi, Kabupaten Pasuruan, terdapat salah satu kebun raya di Indonesia yang bernama Kebun Raya Purwodadi yang memiliki luas area hingga 85 hektar. Kebun raya sebagai fasilitas rekreasi dan penelitian ini ternyata kekurangan papan informasi yang seharusnya disediakan oleh pihak pengelola. Hal ini menyebabkan banyaknya pengunjung yang merasa kebingungan untuk mencari lokasi dari tanaman tertentu. Oleh karena itu, Yusuf et al (2017) memutuskan untuk membuat suatu aplikasi dengan memanfaatkan algoritma Dijkstra untuk membantu pengunjung Kebun Raya Purwodadi dalam mencari lokasi tertentu.
+
+Algoritma Dijkstra digunakan karena algoritma ini dapat beroperasi secara menyeluruh (algoritma greedy) terhadap semua alternatif fungsi serta durasi eksekusi yang lebih cepat jika dibandingkan dengan algoritma serupa, yaitu Bellman-Ford. Algoritma ini akan mencari jalur dengan 'biaya' atau cost terendah antara dua titik dengan membandingkan semua alternatif yang ada.
+
+Pada kasus ini, masing-masing persimpangan di Kebun Raya Purwodadi direpresentasikan sebagai vertex dan setiap jalan direpresentasikan sebagai edge. Rute terdekat yang didapatkan akan diperoleh dari pembobotan setiap vertex dan edge berdasarkan jarak antara titik pengguna dengan titik tujuan atau tanaman.
+
+\section{Studi Pustaka}
+
+\subsection{Algoritma Dijkstra}
+\begin{algorithm}
+    \caption{Dijkstra's Algorithm}
+    \SetAlgoLined
+    \DontPrintSemicolon
+   
+    \KwResult{Find the shortest path from a to z}
+    \textbf{procedure} Dijkstra (\textit{G}: weighted connected simple graph, with all weights positive)
+    
+    \{\textit{G} has vertice $a = v_0, v_1, ..., v_n = z$ and lengths $w(v_i, v_j)$ where $w(v_i, v_j) = \infty$ if $v_i, v_j$ is not an edge in \textit{G}\}
+    
+    \For{$i := 1$ \KwTo $n$}{
+        $L(v_i) := \infty$\;
+    }
+    $L(a) := 0$\;
+    $S := \varnothing$
+
+    \{the labels are now initialized so that the label of $a$ is 0 and all other labels are $\infty$, and $S$ is the empty set\}
+
+    \While{$z \notin S$}{
+        $u :=$ a vertex not in S with $L(u)$ minimal\;
+        $S := S \cup \{u\}$\;
+        \For{\textit{all vertices} $v$ \textit{not in} $S$}{
+            \If{$L(u) + w(u,v) < L(v)$}{
+                $L(v) := L(u) + w(u,v)$\;
+                \{this adds a vertex to $S$ with minimal label and updates the labels of vertices not in S\}\;
+            }
+        }
+    }
+    \textbf{return} $L(z)=$ \textit{length of a shortest path from a to z}
+    
+\end{algorithm}
+
+Algoritma Dijkstra adalah algoritma yang digunakan untuk menemukan jarak jalur terpendek antara dua \textit{vertice} pada \textit{graph} berbobot dan tidak berarah sederhana~\cite{Rosen2012}. Berbobot berarti grafik memiliki \textit{edge} dengan suatu ’bobot’ atau harga. Bobot dapat merepresentasikan jarak, waktu, atau apapun yang memodelkan koneksi antara kedua \textit{node}. Tidak berarah memiliki arti bahwa untuk setiap \textit{node} yang terhubung, kita dapat mendekati suatu \textit{node} dari kedua arah. Pendekatan Dijikstra juga memiliki asumsi bahwa bobot pada \textit{edge} memiliki nilai yang tidak negatif. Hal ini karena nilai bobot akan terus dibandingkan dan diambil nilai yang paling kecil. Ada banyak varian pada algoritma ini, namun pada percobaan ini digunakan varian dimana suatu node ditetapkan menjadi \textit{source node}. Dari \textit{node} inilah akan dicari jarak terpendek diantara \textit{node} lain. Algoritma ini dicetuskan oleh Edsger Wybe Dijkstra, salah seorang tokoh ternama di bidang \textit{computer science}~\cite{Dijkstra1959}. Kompleksitas dari algoritma dijkstra adalah O(n$^2$), dengan n menyatakan jumlah \textit{vertice} dari \textit{graph} yang bersangkutan.
+
+\subsection{Kebun Raya Purwodadi}
+Kebun Raya Purwodadi adalah kebun penelitian di Kecamatan Purwodadi, Jawa Timur. Ia juga dikenal dengan nama Hortus Ilkim Kering Purwodadi dan didirikan tanggal 30 Januari 1941 oleh Dr. L.G.M. Baas Becking. Sebagai cabang dari Kebun Raya Bogor, ia memiliki fungsi mengkoleksi tumbuhan yang hidup di dataran rendah kering. Sebagai Balai Konservasi Tumbuhan di bawah Pusat Konservasi Tumbuhan Kebun Raya, Kedeputian Bidang Ilmu Pengetahuan Hayati LIPI, kebun raya ini memiliki banyak tumbuhan yang dinaunginya. Dengan menggunakan Algoritma Dijkstra, diharapkan ia dapat membantu pengunjung mencari tanaman tertentu maupun jarak yang paling optimal.
+
+\section{Metodologi Penelitian}
+Peneliti menggunakan beberapa tahap dalam penyusunan paper ini. Pertama, dilakukan pengkajian dan studi literatur dengan membaca referensi paper yang berkaitan dan memilih paper yang dapat menjadi acuan dalam penelitian yang dilakukan, sehingga dari pilihan topik dan tema yang berkaitan secara luas dapat dikecilkan menjadi sebuah paper yang mencakup mayoritas dari topik yang dibahas. Setelah ditemukan beberapa paper, dilakukan perangkuman untuk menentukan paper yang sesuai sekaligus membahas poin-poin penting dari paper yang ingin dicapai. Setelah kedua tahap tersebut dilewati, penentuan paper yang dijadikan prototype penelitian merupakan hal yang mudah dan menjadi titik pencapaian dalam studi literatur dan pemilihan topik dari prototipe penelitian yang dilakukan.
+
+Setelah itu, tahap selanjutnya yang dilakukan oleh peneliti adalah pembuatan prototipe berupa program yang ditulis dalam bahasa C. Pembuatan prototipe berupa kode ini dilakukan terus-menerus dengan menggunakan metode trial and error sehingga perlu dilakukan revisi hingga prototipe kode yang dibuat dapat mendapatkan output yang optimal dan sesuai dengan spesifikasi yang diharapakan. Tahap terakhir dari penelitian adalah pemaparan kode yang berhasil dijalankan tersebut ke dalam paper.
+
+\begin{figure}[htp]
+    \centering
+    \smartdiagram[priority descriptive diagram]{
+        Penyusunan Laporan,
+        Finalisasi Prototipe, 
+        Melakukan Revisi Prototipe,
+        Membuat Prototipe dalam Bahasa C,
+        Membuat Desain/Algoritma Prototipe,
+        Memilih Topik Paper yang Akan Dibuat Prototipenya,
+        Merangkum paper,
+        Membaca beberapa paper}
+\end{figure}
+
+\section{Implementasi dan Pengujian}
+
+\subsection{Implementasi Graph pada Array dalam Bahasa C}
+Program akan dimulai dengan pembacaan file bernama "listtanaman.txt". File tersebut akan menyimpan informasi mengenai semua nama tanaman yang bersangkutan. Setelah pembacaan tersebut, akan dicari informasi mengenai bobot \textit{graph} yang menghubungkan \textit{node}. Informasi ini disimpan di dalam matriks segitiga bawah kiri didalam file "jarakantarpohon.txt" yang juga dibuka saat program dijalankan. Matriks menggambarkan bobot antara jarak dua \textit{node} tanaman sekali saja karena pemodelan \textit{undirected graph} yang memiliki jarak sama baik dari a ke b maupun b ke a. Nilai $-$1 akan menggambarkan bagian \textit{node} yang tidak terhubung sama sekali dalam \textit{graph} dan juga dinyatakan dalam suatu variabel bernama int\_max (jaraknya sebesar tak hingga). Nilai jarak terpendek akan disimpan dalam array tersebut selagi program berjalan.
+
+\subsection{Implementasi Algoritma Dijkstra dalam Bahasa C}
+Dalam implementasi algoritma, abstraksi dengan menggunakan pseudocode dapat dibagi menjadi dua buah fungsi dan satu program utama. Fungsi yang digunakan adalah fungsi \textit{printgraph} (fungsi \textit{graph}) untuk memunculkan \textit{graph} berukuran $n \times n$ ke layar pengguna. Algoritma dari fungsi tersebut dapat dilihat pada bagian di bawah ini:
+
+\begin{algorithm}
+    \caption{Fungsi Graph (\texttt{printgraph})}
+    \SetAlgoLined
+    \DontPrintSemicolon
+   
+    \KwResult{Memunculkan Graph $n \times n$ ke Layar}
+    \textbf{procedure} \textit{printgraph(n, graph[n][n])}\\
+    \While{$i \le n - 1$}{
+        $j \gets 0;$\;
+        \While{$j \le n - 1$}{
+            \uIf{$graph[i][j] = int\_max$}{
+                \textbf{output} ($-1$)$;$\;
+            }
+            \Else{
+                \textbf{output} ($graph[i][j]$)$;$\;
+            }
+            $j \gets j + 1;$\;
+        }
+        $i \gets i + 1;$\;
+    }
+\end{algorithm}
+
+Fungsi kedua yang digunakan adalah fungsi pencari indeks pada \textit{array} yang akan diproses dengan menggunakan pendekatan algoritma Dijkstra. Abstraksi fungsi yang digunakan dapat dilihat pada bagian berikut ini:
+
+\begin{algorithm}
+    \caption{Fungsi Pencari Indeks \texttt{idx\_process}}
+    \SetAlgoLined
+    \DontPrintSemicolon
+   
+    \KwResult{Mencari indeks yang akan diproses dengan algoritma Dijkstra}
+    \textbf{Initialization:}\\
+    $is\_found \gets FALSE;$\\
+    $i \gets 0;$\\
+    \textbf{Algorithm:}\\
+    \While{$i \le n - 1$}{
+        $j \gets 0;$\;
+        \If{$!is\_final[i]$ \textbf{and} $!is\_found$}{
+            $idx\_min \gets i;$\;
+            $val\_minimum \gets jarak\_f[i];$\;
+            $is\_found \gets true;$\;
+        }
+        \If{$is\_found$ \textbf{and} $!is\_final[i]$ \textbf{and} ($jarak\_f[i] < val\_minimum$)}{
+            $idx\_min \gets i;$\;
+            $val\_minimum \gets jarak\_f[i];$\;
+        }
+    }
+    \uIf{$is\_found$}{
+        \textbf{return} ($idx\_min$)$;$\;
+    }
+    \Else{
+        \textbf{return} ($int\_max$)$;$\;
+    }
+\end{algorithm}
+
+Program utama akan membaca file database tanaman beserta jarak masing-masing tanaman dan akan mencetak daftar tanaman yang berada di Kebun Raya Purwodadi. Kemudian, program akan menerima input salah satu tanaman terdekat dari pengguna sebagai penanda posisi awal pengguna. Setelah itu, program akan kembali menerima input posisi tanaman tujuan dan memproses pencarian rute terdekat dengan algoritma Dijkstra. Rute yang diperlukan akan ditampilkan dalam bentuk list nama tanaman yang harus dilalui pengguna dan menampilkan jarak antara kedua tanaman tersebut. Implementasi algoritma dalam abstraksi tersebut dapat dilihat pada gambar di bawah ini:
+
+\vspace{-11pt}
+
+\begin{algorithm}
+    \caption{Program Utama Pencarian Rute Antara Dua Tanaman - Pembacaan Jumlah Tanaman}
+    \SetAlgoLined
+    \DontPrintSemicolon
+   
+    \KwResult{Menyimpan nama tanaman pada sebuah array}
+    \textbf{Algorithm:}\\
+    \textbf{input}\texttt{(namafile\_tanaman);}\\
+    \textbf{open}\texttt{(namafile\_tanaman);}\\
+    \textbf{read}\texttt{(namafile\_tanaman);}\\
+    \texttt{n\_tanaman $\gets$ 0;}\\
+    \texttt{baris $\gets$ 0;}\\
+    \While{\texttt{baris $\le$ max\_len}}{
+        \texttt{token $\gets$ parse(baris);}\;
+        \texttt{token $\gets$ nama\_tanaman[n\_tanaman];}\;
+        \texttt{n\_tanaman $\gets$ n\_tanaman $+$ 1;}\;
+        \texttt{baris $\gets$ baris $+$ 1;}\;
+    }
+\end{algorithm}
+
+\vspace{-11pt}
+
+Setelah pembacaan jumlah tanaman dari file, maka diperlukan \textit{graph} atau jarak antar tanaman yang akan menjadi dasar perhitungan dari pencarian rute terdekat. Proses memasukkan \textit{graph} dapat dilihat pada algoritma berikut ini:
+
+\vspace{-11pt}
+
+\begin{algorithm}
+    \caption{Program Utama Pencarian Rute Antara Dua Tanaman - Memasukkan Graph}
+    \SetAlgoLined
+    \DontPrintSemicolon
+   
+    \KwResult{Menyimpan graph dalam sebuah matriks $n \times n$}
+    \textbf{input}\texttt{(namafile\_graph);}\\
+    \textbf{open}\texttt{(namafile\_graph);}\\
+    \textbf{read}\texttt{(namafile\_graph);}\\
+    \texttt{baris $\gets$ 0;}\\
+    \While{\texttt{baris $\le$ max\_len}}{
+        $k \gets 0;$\;
+        $token \gets parse$($baris$)$;$\;
+        \While{$token \ne NULL$}{
+            \texttt{graph[j][k] $\gets token;$}\;
+            \texttt{graph[k][j] $\gets token;$}\;
+            \uIf{$token == -1$}{
+                \texttt{graph[j][k] $\gets int\_max;$}\;
+                \texttt{graph[k][j] $\gets int\_max;$}\;
+            }
+            \Else{
+                $k \gets k + 1;$\;
+                $token \gets parse$($NULL$)$;$\;
+            }
+        }
+        $baris \gets baris + 1;$\;
+    }
+\end{algorithm}
+
+Setelah data yang dibutuhkan dimasukkan, implementasi dari algoritma Dijkstra untuk pencarian rute terdekat adalah sebagai berikut:
+
+\begin{algorithm}\fontsize{9.47pt}{9.4pt}
+    \caption{Program Utama Pencarian Rute Antara Dua Tanaman - Pencarian Jarak dengan Algoritma Dijkstra}
+    \SetAlgoLined
+    \DontPrintSemicolon
+   
+    \textbf{Algorithm:}\\
+    \textbf{input}(\texttt{idx\_a})\texttt{;}\\
+    \texttt{idx\_a $\gets$ idx\_a$-$1;}\\
+    \textbf{input}(\texttt{idx\_tujuan})\texttt{;}\\
+    \texttt{idx\_tujuan $\gets$ idx\_tujuan$-$1;}
+
+    \For{\textit{\texttt{i = 0}} \KwTo \textit{\texttt{n\_tanaman}}}{
+        \uIf{\textit{\texttt{i = idx\_a}}}{
+            \texttt{jarak\_f[i] $\gets$ 0;}\;
+            \texttt{is\_final[i] $\gets$ \textit{FALSE};}\;
+        }
+        \Else{
+            \texttt{jarak\_f[i] $\gets$ int\_max;}\;
+            \texttt{is\_final[i] $\gets$ \textit{FALSE};}\;
+        }
+        \For{\textit{\texttt{j = 0}} \KwTo \textit{\texttt{n\_tanaman}}}{
+            \texttt{list\_dilalui[i][j] $\gets$ int\_max;}\;
+        }
+        \texttt{idx\_lalui[i] $\gets$ 0;}\;
+    }
+    \texttt{jarak\_f[idx\_a] $\gets$ 0;}\;
+    \texttt{list\_dilalui[idx\_a][0] $\gets$ idx\_a;}\;
+    \texttt{idx\_lalui[idx\_a] $\gets$ idx\_lalui[idx\_a]+1}\;
+    \texttt{idx\_now $\gets$ idx\_a;}\;
+
+    \While{\texttt{idx\_now $\ne$ int\_max}}{
+        \texttt{is\_final[idx\_now] $\gets$ \textit{TRUE};}\;
+        \For{\texttt{i = 0 \KwTo n\_tanaman$-1$}}{
+            \If{(\texttt{!is\_final[i]}) \textbf{and} \texttt{graph[idx\_now][i] $\ne$ int\_max} \textbf{and} (\texttt{jarak\_f[idx\_now] $+$ graph[idx\_now][i]}) \texttt{> jarak\_f[i]}}{
+                \texttt{jarak\_f[i] $\gets$ } (\texttt{jarak\_f[idx\_now] $+$ graph[idx\_now][i]})\texttt{;}\;
+                \texttt{idx\_lalui[i] $\gets$ idx\_lalui[idx\_now] $+$ 1;}\;
+            }
+            \For{\texttt{j = 0 \KwTo idx\_dilalui[i]$-1$}}{  
+                \uIf{\texttt{j = idx\_dilalui[i]-1}}{
+                    \texttt{list\_dilalui[i][j] $\gets$ i;}\;
+                }
+                \Else{
+                    \texttt{list\_dilalui[i][j] $\gets$ list\_dilalui[idx\_now][j];}\;
+                }
+            }
+        }
+        \texttt{idx\_now $\gets$ idx\_process}(\texttt{n\_tanaman, jarak\_f, is\_final})\texttt{;}\;
+    }
+\end{algorithm}
+
+\subsection{Implementasi Program dalam Bahasa C}
+Implementasi program dalam bahasa C dapat dilihat pada repository berikut. 
+\url{https://github.com/ReynaldoAverill/Tugas7PMC}
+
+\subsection{Perhitungan Kompleksitas Waktu}
+Kompleksitas dari program ini dengan notasi kompleksitas Big O adalah $O(n^2)$. Hal tersebut disebabkan pada \textit{loop} program bagian \textit{for}, terdapat \textit{loop for} lain yang berjumlah dua \textit{loop} (Terletak pada bagian \textit{assign} kondisi awal dan ketika program menjalankan algoritma Djikstra). Karena hal tersebut, akibatnya adalah kompleksitas waktu akan naik seiring dengan naiknya n program yang dijalankan, namun tidak bersifat linear sehingga kompleksitas waktunya adalah $O(n^2)$. Grafik kompleksitas waktu dapat direpresentasikan pada gambar 1.
+
+\begin{figure}[htbp]
+    \centering
+    \scalebox{0.38}{\input{gambar/Waktu.pdf_tex}}
+    \caption{Kompleksitas Waktu Program}
+\end{figure}
+
+\subsection{Perhitungan Kompleksitas Tempat}
+Matriks penyimpanan yang digunakan pada program ini
+memiliki ukuran terbesar $n \times n$, dengan nilai n merepresen-
+tasikan banyak tanaman dalam file "listtanaman.txt". Program
+akan melalui grafik dan menyimpan nilai bobot antara \textit{node}
+sebesar matriks di atas, mengakibatkan program dengan kom-
+pleksitas $O(n^2)$. Hal ini dapat dilihat pada grafik kompleksitas
+tempat di gambar 2.
+
+\begin{figure}[htbp]
+    \centering
+    \scalebox{0.38}{\input{gambar/Tempat.pdf_tex}}
+    \caption{Kompleksitas Tempat Program}
+\end{figure}
+
+\section{Kesimpulan}
+Pada perhitungan Jarak Terdekat dalam suatu lokasi atau ruang dapat diimplementasikan penggunaan Algoritma Djikstra dalam perhitungannya untuk mencapai suatu target pada ruang tersebut dari suatu titik. Terbukti dari penelitian Kebun Raya Purwodadi untuk menentukan Tanaman yang ingin dituju.
+
+% Referensi
+\bibliography{references.bib}
+\bibliographystyle{IEEEtran}
+
+\end{document}
