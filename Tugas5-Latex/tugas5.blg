@@ -1,0 +1,60 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: tugas5.aux
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+The style file: IEEEtran.bst
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 6000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Database file #1: references.bib
+-- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+Warning--missing publisher in Dijkstra1959
+
+Done.
+You've used 3 entries,
+            4087 wiz_defined-function locations,
+            840 strings with 7863 characters,
+and the built_in function-call counts, 1376 in all, are:
+= -- 100
+> -- 21
+< -- 2
++ -- 10
+- -- 5
+* -- 66
+:= -- 242
+add.period$ -- 5
+call.type$ -- 3
+change.case$ -- 1
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 106
+empty$ -- 137
+format.name$ -- 6
+if$ -- 303
+int.to.chr$ -- 0
+int.to.str$ -- 3
+missing$ -- 19
+newline$ -- 32
+num.names$ -- 3
+pop$ -- 51
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 2
+skip$ -- 114
+stack$ -- 0
+substring$ -- 9
+swap$ -- 66
+text.length$ -- 2
+text.prefix$ -- 0
+top$ -- 5
+type$ -- 3
+warning$ -- 1
+while$ -- 4
+width$ -- 4
+write$ -- 46
+(There was 1 warning)
